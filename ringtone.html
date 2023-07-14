@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multiple Image Upload</title>
+  <!-- <script src="assets/js/script.js"></script> -->
+</head>
+<body>
+  <h1>Multiple Image Upload</h1>
+  
+  <form id="uploadForm">
+    <input type="file" name="images" id="imageUpload" multiple>
+    <button type="submit" >Upload</button>
+  </form>
+
+  <h1>Audio Files</h1>
+  <div id="audioContainer"></div>
+  
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+ 
+  
+  <script>
+    // Initialize Firebase
+    var firebaseConfig = {
+        apiKey: "AIzaSyCi1x-ypNDm4hPKb__ystUoNC2nvWM2ihA",
+    authDomain: "pastrygenic-9203d.firebaseapp.com",
+    databaseURL: "https://pastrygenic-9203d-default-rtdb.firebaseio.com",
+    projectId: "pastrygenic-9203d",
+    storageBucket: "pastrygenic-9203d.appspot.com",
+    messagingSenderId: "126423739741",
+    appId: "1:126423739741:web:a717e7d825f1a36696ccb4",
+    measurementId: "G-6T1ELNVG02"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    // Get a reference to the Firebase Storage service
+    var storageRef = firebase.storage().ref("ringtone");
+    var databaseRef = firebase.database().ref("ringtone");
+
+    // Handle form submission
+    var form = document.getElementById('uploadForm');
+    form.addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent form submission
+      
+      var files = document.getElementById('imageUpload').files;
+      uploadImages(files);
+    });
+
+    // Function to upload multiple images to Firebase Storage
+    function uploadImages(files) {
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        var filename = file.name;
+        var storageFileRef = storageRef.child(filename);
+        
+        // Upload the file to Firebase Storage
+        storageFileRef.put(file).then(function(snapshot) {
+          console.log('Image uploaded:', snapshot.metadata.fullPath);
+          snapshot.ref.getDownloadURL().then(function(downloadURL) {
+      console.log('Download URL:', downloadURL);
+      
+      // Save the download URL to RTDB
+      var imageKey = databaseRef.push().key;
+      databaseRef.child(imageKey).set(downloadURL);
+      console.log('Image URL saved to RTDB:', downloadURL);
+    });
+  }).catch(function(error) {
+    console.error('Error uploading image:', error);
+  });
+           
+      }
+    }
+  </script>
+  <script>
+     var databaseRef = firebase.database().ref("ringtone");
+
+// Retrieve audio file URLs from the database and display them in HTML
+databaseRef.once("value").then(function(snapshot) {
+  var audioContainer = document.getElementById("audioContainer");
+
+  snapshot.forEach(function(childSnapshot) {
+    var audioURL = childSnapshot.val();
+    var audioElement = document.createElement("audio");
+    audioElement.src = audioURL;
+    audioElement.controls = true;
+    audioContainer.appendChild(audioElement);
+  });
+});
+  </script>
+</body>
+</html>
