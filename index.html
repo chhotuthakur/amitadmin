@@ -5,6 +5,25 @@
   <!-- <script src="assets/js/script.js"></script> -->
 </head>
 <body>
+   <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 10px;
+            max-width: 800px; /* Adjust this value as needed */
+            margin: 0 auto;
+        }
+        
+        .grid-item {
+            width: 100%;
+            height: auto;
+        }
+        
+        .grid-item img {
+            width: 100%;
+            height: auto;
+        }
+    </style>
   <h1>Multiple Image Upload</h1>
   
   <form id="uploadForm">
