@@ -101,9 +101,14 @@ databaseRef.once("value").then(function(snapshot) {
 
   snapshot.forEach(function(childSnapshot) {
     var imageURL = childSnapshot.val();
+
+    var gridcontainer = document.createElement("grid-container");
+    var griditem = document.createElement("grid-item");
     var imgElement = document.createElement("img");
     imgElement.src = imageURL;
     imageContainer.appendChild(imgElement);
+    imageContainer.appendChild(griditem);
+    imageContainer.appendChild(gridcontainer);
   });
 });
   </script>
